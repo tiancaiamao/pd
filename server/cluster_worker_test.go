@@ -209,8 +209,8 @@ func (n *mockRaftNode) handleRequest(c *C, req *raft_cmdpb.RaftCommandRequest) *
 
 	// Now we can only test in the first created node.
 	// TODO:
-	//	1, Use leader check for region, we can control where leader is.
-	//	2, Simulate raft message transport, leader can send this request to
+	//	1. Use leader check for region, we can control where leader is.
+	//	2. Simulate raft message transport, leader can send this request to
 	//		other peers directly.
 
 	_, ok = store.peers[req.Header.GetRegionId()]
