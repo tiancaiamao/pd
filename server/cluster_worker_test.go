@@ -156,6 +156,7 @@ func (s *testClusterWorkerSuite) broadcastRaftMsg(c *C, leader *mockRaftPeer,
 	if req.AdminRequest != nil && req.AdminRequest.ChangePeer != nil {
 		changePeer := req.AdminRequest.ChangePeer
 		if changePeer.GetChangeType() == raftpb.ConfChangeType_AddNode {
+			c.Assert(changePeer.Peer.GetPeerId(), Not(Equals), leader.peer.GetPeerId())
 			msg := &mockRaftMsg{
 				peer:   *changePeer.Peer,
 				region: *proto.Clone(&region).(*metapb.Region),
