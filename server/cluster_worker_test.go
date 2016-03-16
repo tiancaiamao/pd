@@ -151,7 +151,7 @@ func (s *testClusterWorkerSuite) broadcastRaftMsg(c *C, leader *mockRaftPeer,
 		}
 	}
 
-	// We should handle conf change add specially, because here the leader's
+	// We should handle ConfChangeType_AddNode specially, because here the leader's
 	// region doesn't contain this peer.
 	if req.AdminRequest != nil && req.AdminRequest.ChangePeer != nil {
 		changePeer := req.AdminRequest.ChangePeer
@@ -282,11 +282,8 @@ func (n *mockRaftNode) handleRaftMsg(c *C, msg *mockRaftMsg) {
 		}
 	}
 
-	// all the node must execute the same result.
-	resp := store.handleWriteCommand(c, msg.req)
-	if resp.Header != nil && resp.Header.Error != nil {
-		c.Logf("%s %s %s\n", store.storeIdent.String(), msg.req.String(), resp.Header.Error.String())
-	}
+	// TODO: all nodes must have same response, check later.
+	store.handleWriteCommand(c, msg.req)
 }
 
 func newErrorCmdResponse(err error) *raft_cmdpb.RaftCommandResponse {
@@ -326,7 +323,7 @@ func (n *mockRaftNode) proposeCommand(c *C, req *raft_cmdpb.RaftCommandRequest) 
 		return store.handleStatusRequest(c, req)
 	}
 
-	// lock leader here
+	// lock leader to prevent outer test change it.
 	n.s.regionLeaderLock.Lock()
 	defer n.s.regionLeaderLock.Unlock()
 
@@ -344,6 +341,7 @@ func (n *mockRaftNode) proposeCommand(c *C, req *raft_cmdpb.RaftCommandRequest) 
 	n.s.broadcastRaftMsg(c, peer, req)
 	resp := store.handleWriteCommand(c, req)
 
+	// update the region leader.
 	n.s.regionLeaders[regionID] = peer.peer
 
 	return resp
