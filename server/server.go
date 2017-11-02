@@ -27,6 +27,9 @@ import (
 	"github.com/coreos/etcd/clientv3"
 	"github.com/coreos/etcd/embed"
 	"github.com/coreos/etcd/pkg/types"
+	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/juju/errors"
 	"github.com/pingcap/kvproto/pkg/pdpb"
 	"github.com/pingcap/pd/pkg/etcdutil"
@@ -106,6 +109,18 @@ func CreateServer(cfg *Config, apiRegister func(*Server) http.Handler) (*Server,
 		etcdCfg.UserHandlers = map[string]http.Handler{
 			pdAPIPrefix: apiRegister(s),
 		}
+	}
+	unaryInterceptor := grpc_middleware.ChainUnaryServer(
+		grpc_prometheus.UnaryServerInterceptor,
+		grpc_opentracing.UnaryServerInterceptor(),
+	)
+	streamInterceptor := grpc_middleware.ChainStreamServer(
+		grpc_prometheus.StreamServerInterceptor,
+		grpc_opentracing.StreamServerInterceptor(),
+	)
+	etcdCfg.GRPCServerOptions = []grpc.ServerOption{
+		grpc.UnaryInterceptor(unaryInterceptor),
+		grpc.StreamInterceptor(streamInterceptor),
 	}
 	etcdCfg.ServiceRegister = func(gs *grpc.Server) { pdpb.RegisterPDServer(gs, s) }
 	s.etcdCfg = etcdCfg

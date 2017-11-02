@@ -51,9 +51,10 @@ type serveCtx struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	userHandlers    map[string]http.Handler
-	serviceRegister func(*grpc.Server)
-	grpcServerC     chan *grpc.Server
+	userHandlers      map[string]http.Handler
+	serviceRegister   func(*grpc.Server)
+	grpcServerOptions []grpc.ServerOption
+	grpcServerC       chan *grpc.Server
 }
 
 func newServeCtx() *serveCtx {
@@ -77,7 +78,7 @@ func (sctx *serveCtx) serve(s *etcdserver.EtcdServer, tlscfg *tls.Config, handle
 	servLock := v3lock.NewLockServer(v3c)
 
 	if sctx.insecure {
-		gs := v3rpc.Server(s, nil)
+		gs := v3rpc.Server(s, nil, sctx.grpcServerOptions...)
 		sctx.grpcServerC <- gs
 		v3electionpb.RegisterElectionServer(gs, servElection)
 		v3lockpb.RegisterLockServer(gs, servLock)
@@ -107,7 +108,7 @@ func (sctx *serveCtx) serve(s *etcdserver.EtcdServer, tlscfg *tls.Config, handle
 	}
 
 	if sctx.secure {
-		gs := v3rpc.Server(s, tlscfg)
+		gs := v3rpc.Server(s, tlscfg, sctx.grpcServerOptions...)
 		sctx.grpcServerC <- gs
 		v3electionpb.RegisterElectionServer(gs, servElection)
 		v3lockpb.RegisterLockServer(gs, servLock)

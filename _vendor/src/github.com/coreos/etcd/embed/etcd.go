@@ -373,6 +373,7 @@ func startClientListeners(cfg *Config) (sctxs map[string]*serveCtx, err error) {
 			sctx.userHandlers[k] = cfg.UserHandlers[k]
 		}
 		sctx.serviceRegister = cfg.ServiceRegister
+		sctx.grpcServerOptions = cfg.GRPCServerOptions
 		if cfg.EnablePprof || cfg.Debug {
 			sctx.registerPprof()
 		}

@@ -129,8 +129,10 @@ type Config struct {
 	//	embed.StartEtcd(cfg)
 	ServiceRegister func(*grpc.Server) `json:"-"`
 
-	// auth
+	// GRPC options for grpc.NewServer()
+	GRPCServerOptions []grpc.ServerOption `json:"-"`
 
+	// auth
 	AuthToken string `json:"auth-token"`
 }
 

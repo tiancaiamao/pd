@@ -31,15 +31,15 @@ func init() {
 	grpclog.SetLogger(plog)
 }
 
-func Server(s *etcdserver.EtcdServer, tls *tls.Config) *grpc.Server {
-	var opts []grpc.ServerOption
-	opts = append(opts, grpc.CustomCodec(&codec{}))
-	if tls != nil {
-		opts = append(opts, grpc.Creds(credentials.NewTLS(tls)))
+func Server(s *etcdserver.EtcdServer, tls *tls.Config, opts ...grpc.ServerOption) *grpc.Server {
+	defaultOpts := []grpc.ServerOption{
+		grpc.CustomCodec(&codec{}),
+		grpc.MaxConcurrentStreams(maxStreams),
 	}
-	opts = append(opts, grpc.UnaryInterceptor(newUnaryInterceptor(s)))
-	opts = append(opts, grpc.StreamInterceptor(newStreamInterceptor(s)))
-	opts = append(opts, grpc.MaxConcurrentStreams(maxStreams))
+	if tls != nil {
+		defaultOpts = append(defaultOpts, grpc.Creds(credentials.NewTLS(tls)))
+	}
+	opts = append(defaultOpts, opts...)
 	grpcServer := grpc.NewServer(opts...)
 
 	pb.RegisterKVServer(grpcServer, NewQuotaKVServer(s))
