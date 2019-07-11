@@ -19,6 +19,7 @@ import (
 	"crypto/x509"
 	"io/ioutil"
 	"net/url"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -596,7 +597,11 @@ func (req *tsoRequest) Wait() (physical int64, logical int64, err error) {
 	// If tso command duration is observed very high, the reason could be it
 	// takes too long for Wait() be called.
 	start := time.Now()
-	cmdDurationTSOAsyncWait.Observe(start.Sub(req.start).Seconds())
+	dur := start.Sub(req.start)
+	if dur >= 4*time.Millisecond {
+		debug.PrintStack()
+	}
+	cmdDurationTSOAsyncWait.Observe(dur.Seconds())
 	select {
 	case err = <-req.done:
 		err = errors.WithStack(err)
