@@ -17,6 +17,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"fmt"
 	"io/ioutil"
 	"net/url"
 	"runtime/debug"
@@ -600,6 +601,7 @@ func (req *tsoRequest) Wait() (physical int64, logical int64, err error) {
 	dur := start.Sub(req.start)
 	if dur >= 4*time.Millisecond {
 		debug.PrintStack()
+		fmt.Println("[pd] WHAT THE FUCK", dur)
 	}
 	cmdDurationTSOAsyncWait.Observe(dur.Seconds())
 	select {
