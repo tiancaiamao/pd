@@ -7,6 +7,13 @@ go 1.25.7
 // After the PR to kvproto is merged, remember to comment this out and run `go mod tidy`.
 // replace github.com/pingcap/kvproto => github.com/$YourPrivateRepo $YourPrivateBranch
 
+replace go.etcd.io/etcd/api/v3 => github.com/tiancaiamao/etcd/api/v3 v3.0.0-20260425020721-24e899459344
+replace go.etcd.io/etcd/client/pkg/v3 => github.com/tiancaiamao/etcd/client/pkg/v3 v3.0.0-20260425020721-24e899459344
+replace go.etcd.io/etcd/client/v3 => github.com/tiancaiamao/etcd/client/v3 v3.0.0-20260425020721-24e899459344
+replace go.etcd.io/etcd/pkg/v3 => github.com/tiancaiamao/etcd/pkg/v3 v3.0.0-20260425020721-24e899459344
+replace go.etcd.io/etcd/raft/v3 => github.com/tiancaiamao/etcd/raft/v3 v3.0.0-20260425020721-24e899459344
+replace go.etcd.io/etcd/server/v3 => github.com/tiancaiamao/etcd/server/v3 v3.0.0-20260425020721-24e899459344
+
 require (
 	github.com/AlekSi/gocov-xml v1.0.0
 	github.com/BurntSushi/toml v1.5.0

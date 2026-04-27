@@ -5,6 +5,12 @@ go 1.25.7
 replace (
 	github.com/tikv/pd => ../
 	github.com/tikv/pd/client => ../client
+	go.etcd.io/etcd/api/v3 => github.com/tiancaiamao/etcd/api/v3 v3.0.0-20260425020721-24e899459344
+	go.etcd.io/etcd/client/pkg/v3 => github.com/tiancaiamao/etcd/client/pkg/v3 v3.0.0-20260425020721-24e899459344
+	go.etcd.io/etcd/client/v3 => github.com/tiancaiamao/etcd/client/v3 v3.0.0-20260425020721-24e899459344
+	go.etcd.io/etcd/pkg/v3 => github.com/tiancaiamao/etcd/pkg/v3 v3.0.0-20260425020721-24e899459344
+	go.etcd.io/etcd/raft/v3 => github.com/tiancaiamao/etcd/raft/v3 v3.0.0-20260425020721-24e899459344
+	go.etcd.io/etcd/server/v3 => github.com/tiancaiamao/etcd/server/v3 v3.0.0-20260425020721-24e899459344
 )
 
 require (
