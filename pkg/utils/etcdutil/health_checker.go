@@ -414,7 +414,7 @@ func (checker *healthChecker) loadClient(ep string) *healthyClient {
 }
 
 func (checker *healthChecker) initClient(ep string) {
-	client, err := newClient(checker.tlsConfig, ep)
+	client, err := newClient(checker.tlsConfig, EtcdClientPurpose(checker.source), ep)
 	if err != nil {
 		log.Error("failed to create etcd healthy client",
 			zap.String("endpoint", ep),

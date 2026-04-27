@@ -277,7 +277,7 @@ const (
 	McsEtcdClientPurpose EtcdClientPurpose = "mcs-etcd-client"
 )
 
-func newClient(tlsConfig *tls.Config, endpoints ...string) (*clientv3.Client, error) {
+func newClient(tlsConfig *tls.Config, purpose EtcdClientPurpose, endpoints ...string) (*clientv3.Client, error) {
 	if len(endpoints) == 0 {
 		return nil, errs.ErrNewEtcdClient.FastGenByArgs("empty etcd endpoints")
 	}
@@ -290,6 +290,7 @@ func newClient(tlsConfig *tls.Config, endpoints ...string) (*clientv3.Client, er
 		LogConfig:            &lgc,
 		DialKeepAliveTime:    defaultDialKeepAliveTime,
 		DialKeepAliveTimeout: defaultDialKeepAliveTimeout,
+		Source:               string(purpose),
 	})
 	return client, err
 }
@@ -300,7 +301,7 @@ func CreateEtcdClient(tlsConfig *tls.Config, acURLs []url.URL, purpose EtcdClien
 	for _, u := range acURLs {
 		urls = append(urls, u.String())
 	}
-	client, err := newClient(tlsConfig, urls...)
+	client, err := newClient(tlsConfig, purpose, urls...)
 	if err != nil {
 		return nil, err
 	}

@@ -116,6 +116,7 @@ func PrepareJoinCluster(cfg *config.Config) error {
 		DialTimeout: etcdutil.DefaultDialTimeout,
 		TLS:         tlsConfig,
 		LogConfig:   &lgc,
+		Source:      "pd-join",
 	})
 	if err != nil {
 		return errors.WithStack(err)
